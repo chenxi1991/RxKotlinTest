@@ -1,18 +1,10 @@
+.gradle/
+/build/
+/gradle/
+/.idea/
 *.iml
-.gradle
 local.properties
 gradlew.bat
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
-/build
-/.idea/copyright
-/.idea/dictionaries
-/.gradle
-/gradle
-/captures
 gradlew
 gradle.properties
-.externalNativeBuild
 
-/.idea/
