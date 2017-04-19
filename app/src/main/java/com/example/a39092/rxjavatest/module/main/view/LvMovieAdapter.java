@@ -67,7 +67,7 @@ public class LvMovieAdapter extends BaseAdapter {
         RxView.clicks(convertView).throttleFirst(1, TimeUnit.SECONDS).subscribe(new Consumer<Object>() {
             @Override
             public void accept(Object o) throws Exception {
-                Toast.makeText(context, position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, String.valueOf(position), Toast.LENGTH_SHORT).show();
             }
         });
         return convertView;
