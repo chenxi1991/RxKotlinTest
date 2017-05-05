@@ -21,12 +21,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
-import io.reactivex.schedulers.Schedulers;
 
 
 public class RxJavaTest {
     public static void main(String[] attrs) {
-        TestSample();
+        TestFlatMap();
     }
 
     public static void Test1() {
@@ -141,7 +140,7 @@ public class RxJavaTest {
             @Override
             public ObservableSource<String> apply(Integer integer) throws Exception {
                 final List<String> list = new ArrayList<String>();
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 5; i++) {
                     list.add("String:" + integer);
                 }
                 return Observable.fromIterable(list);
@@ -260,7 +259,7 @@ public class RxJavaTest {
         });
     }
 
-    public void TestFlowable(){
+    public void TestFlowable() {
         //不推荐，性能比Observable弱
         Flowable<Integer> upstream = Flowable.create(new FlowableOnSubscribe<Integer>() {
             @Override
