@@ -129,13 +129,10 @@ public class RxJavaTest {
     }
 
     public static void TestFlatMap() {
-        Observable.create(new ObservableOnSubscribe<Integer>() {
-            @Override
-            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
-                e.onNext(1);
-                e.onNext(2);
-                e.onNext(3);
-            }
+        Observable.create((ObservableOnSubscribe<Integer>) e -> {
+            e.onNext(1);
+            e.onNext(2);
+            e.onNext(3);
         }).flatMap(new Function<Integer, ObservableSource<String>>() {
             @Override
             public ObservableSource<String> apply(Integer integer) throws Exception {
@@ -168,29 +165,18 @@ public class RxJavaTest {
     }
 
     public static void TestZip() {
-        Observable ob1 = Observable.create(new ObservableOnSubscribe<Integer>() {
-            @Override
-            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
-                e.onNext(1);
-                e.onNext(2);
-                e.onNext(3);
-            }
+        Observable ob1 = Observable.create((ObservableOnSubscribe<Integer>) e -> {
+            e.onNext(1);
+            e.onNext(2);
+            e.onNext(3);
         });
-        Observable ob2 = Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> e) throws Exception {
-                e.onNext("one");
-                e.onNext("two");
-                e.onNext("three");
-                e.onNext("four");
-            }
+        Observable ob2 = Observable.create((ObservableOnSubscribe<String>) e -> {
+            e.onNext("one");
+            e.onNext("two");
+            e.onNext("three");
+            e.onNext("four");
         });
-        Observable.zip(ob1, ob2, new BiFunction<Integer, String, String>() {
-            @Override
-            public String apply(Integer integer, String string2) throws Exception {
-                return "ob1:" + integer + " ob2:" + string2;
-            }
-        }).subscribe(new Observer<String>() {
+        Observable.zip(ob1, ob2, (integer, string2) -> "ob1:" + integer + " ob2:" + string2).subscribe(new Observer<String>() {
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -218,23 +204,16 @@ public class RxJavaTest {
         //1、上游延时发送事件
         //2、过滤器过滤事件
         //3、sample每隔一段时间处理事件
-        Observable.create(new ObservableOnSubscribe<Integer>() {
-            @Override
-            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
-                for (int i = 0; ; i++) {
-                    e.onNext(i);
-                    //每隔2秒发送一次事件
-                    Thread.sleep(2000);
-                }
+        Observable.create((ObservableOnSubscribe<Integer>) e -> {
+            for (int i = 0; ; i++) {
+                e.onNext(i);
+                //每隔2秒发送一次事件
+                Thread.sleep(2000);
             }
-        }).filter(new Predicate<Integer>() {
-            //filter添加上游事件过滤器
-            @Override
-            public boolean test(Integer integer) throws Exception {
-                if (integer % 10 == 0)
-                    return true;
-                return false;
-            }
+        }).filter(integer -> {
+            if (integer % 10 == 0)
+                return true;
+            return false;
         }).sample(2, TimeUnit.SECONDS).subscribe(new Observer<Integer>() {
             //sample:每隔2秒处理一次observable发送的事件
             @Override
@@ -261,14 +240,11 @@ public class RxJavaTest {
 
     public void TestFlowable() {
         //不推荐，性能比Observable弱
-        Flowable<Integer> upstream = Flowable.create(new FlowableOnSubscribe<Integer>() {
-            @Override
-            public void subscribe(FlowableEmitter<Integer> emitter) throws Exception {
-                emitter.onNext(1);
-                emitter.onNext(2);
-                emitter.onNext(3);
-                emitter.onComplete();
-            }
+        Flowable<Integer> upstream = Flowable.create(emitter -> {
+            emitter.onNext(1);
+            emitter.onNext(2);
+            emitter.onNext(3);
+            emitter.onComplete();
         }, BackpressureStrategy.ERROR); //增加了一个参数
 
         Subscriber<Integer> downstream = new Subscriber<Integer>() {
