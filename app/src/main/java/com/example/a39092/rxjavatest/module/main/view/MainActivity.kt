@@ -2,13 +2,13 @@ package com.example.a39092.rxjavatest.module.main.view
 
 import android.os.Bundle
 import android.widget.ListView
+import android.widget.Toast
 import com.example.a39092.rxjavatest.R
 import com.example.a39092.rxjavatest.model.bean.ResponseBody
 import com.example.a39092.rxjavatest.module.base.BaseActivity
 import com.example.a39092.rxjavatest.module.main.presenter.MainPresenter
 import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
 import java.util.*
 
 class MainActivity : BaseActivity(), MainView {
@@ -46,21 +46,14 @@ class MainActivity : BaseActivity(), MainView {
     }
 
     override fun onLoadMovies(response: Observable<ResponseBody>) {
-        response.compose(this.bindToLifecycle<ResponseBody>()).subscribe(object : Observer<ResponseBody> {
-            override fun onSubscribe(d: Disposable) {
-                showProgress()
-            }
-
-            override fun onNext(value: ResponseBody) {
-                movies!!.addAll(value.subjects!!)
-            }
-
-            override fun onError(e: Throwable) {}
-
-            override fun onComplete() {
-                hideProgress()
-                adapter!!.notifyDataSetChanged()
-            }
-        })
+        response.compose(this.bindToLifecycle()).doOnSubscribe { _ ->
+            showProgress()
+        }.subscribeBy(
+                onNext = { responseBody -> movies!!.addAll(responseBody.subjects!!) },
+                onError = { e -> Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show() },
+                onComplete = {
+                    hideProgress()
+                    adapter!!.notifyDataSetChanged()
+                })
     }
 }

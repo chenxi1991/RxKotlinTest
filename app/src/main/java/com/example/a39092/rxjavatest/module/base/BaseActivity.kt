@@ -31,14 +31,11 @@ open class BaseActivity : RxActivity() {
     open fun initView() {}
 
     fun showProgress() {
-        if (mDialog == null)
-            initProgressDialog()
         mDialog!!.show()
     }
 
     fun hideProgress() {
-        if (mDialog != null)
-            mDialog!!.dismiss()
+        mDialog!!.dismiss()
     }
 
     private fun initProgressDialog() {
